@@ -86,7 +86,8 @@ Structure of configuration file:
 
 ```yml
 data:
-  - stack_component: <name-of-component> # can be freely chosen
+  - enable: true
+    stack_component: <name-of-component> # can be freely chosen
     stack_ns: <namespace-of-component>
     components:
       - name: <name-of-policy> # use name of workload here e.g. name shown in the traffic PNG
