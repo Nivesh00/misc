@@ -45,11 +45,12 @@
     ## inventory.yml
     ...
         inv_network_policy:
+          enable: true
           use_default_policy: false
     ...
     ```
 
-- __IMPORTANT:__ if `use_default_policy` is set to false, the configuration file for the tenant must have the exact same name as `tenant_prefix`, e.g.
+- __IMPORTANT:__ if `use_default_policy` is set to false, the configuration file for the tenant must have the exact same name as `<tenant_realm>.yml`, e.g.
 
     - for following configurations
     ```yml
@@ -63,7 +64,7 @@
     ...
     ```
 
-    - network policy configuration file for this tenant must be named `vars/network_policy/berlin.yml`
+    - network policy configuration file for this tenant must be named `vars/network_policy/berlin-realm.yml`
 
 # Steps to create network policies
 
