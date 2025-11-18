@@ -3,12 +3,8 @@
 Repo for personal projects etc...
 
 List of projects:
-  - [configmap-keys-controller](#configmap-keys-controller)
   - [network-policy](#network-policy)
   - [snipe-it](#snipe-it)
-
-## Configmap Keys Controller
-> In Progress
 
 ## Network Policy
 
