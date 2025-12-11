@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: snipe-it-pvc
+  namespace: "{{ namespaces.snipe_it }}"
+spec:
+  storageClassName: "{{ default_storage_class }}"
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi

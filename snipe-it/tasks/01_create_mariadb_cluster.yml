@@ -28,6 +28,7 @@
     values: "{{ lookup('template', 'templates/01_mariadb/mariadb-operator.yml') | from_yaml }}"
     wait: true
 
+# Create secret with password for Snipe IT MariaDB user
 - name: Create Secret for MariaDB User
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig.file }}"
@@ -44,6 +45,7 @@
       data:
         password: "{{ helm.mariadb.cluster.user_password | b64encode }}"
 
+# Deploy MariaDB in namespace
 - name: Deploy MariaDB Cluster
   kubernetes.core.helm:
     kubeconfig: "{{ kubeconfig.file }}"
@@ -67,7 +69,3 @@
   until: mariadb_cluster.resources[0].status.availableReplicas >= 1
   retries: 30
   delay: 10
-
-- name: Waiting 300 Seconds for MariaDB Cluster to stabilise 
-  ansible.builtin.pause:
-    seconds: 300

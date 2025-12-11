@@ -4,27 +4,7 @@
     kubeconfig: "{{ kubeconfig.file }}"
     context: "{{ kubeconfig.context }}"
     state: present
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: snipe-it
-        namespace: "{{ namespaces.snipe_it }}"
-      data:
-        APP_DEBUG: "false"
-        APP_LOCALE: en-US
-        APP_PORT: "8000"
-        APP_URL: 127.0.0.1
-        APP_TIMEZONE: Europe/Berlin
-        DB_CONNECTION: mysql
-        DB_SSL_IS_PAAS: "false"
-        DB_SSL: "false"
-        MYSQL_DATABASE: snipe-it-db
-        MYSQL_PORT_3306_TCP_ADDR: "{{ helm.mariadb.cluster.release_name }}"
-        MYSQL_PORT_3306_TCP_PORT: "3306"
-        MYSQL_USER: snipe-it-user
-        SCIM_STANDARDS_COMPLIANCE: "false"
-        SCIM_TRACE: "false"
+    definition: "{{ lookup('template', 'templates/02_snipe_it/01_configmap.yml') | from_yaml }}"
 
 - name: Create Secret for Snipe IT
   kubernetes.core.k8s:
@@ -32,23 +12,15 @@
     kubeconfig: "{{ kubeconfig.file }}"
     context: "{{ kubeconfig.context }}"
     state: present
-    definition:
-      apiVersion: v1
-      kind: Secret
-      metadata:
-        name: snipe-it
-        namespace: "{{ namespaces.snipe_it }}"
-      data:
-        APP_KEY: "{{ snipe_it.app_key | b64encode }}"
-        MAIL_DRIVER: "{{ snipe_it.email.driver | b64encode }}"
-        MAIL_PORT_587_TCP_ADDR: "{{ snipe_it.email.server | b64encode }}"
-        MAIL_PORT_587_TCP_PORT: "{{ snipe_it.email.port | b64encode }}"
-        MAIL_ENV_ENCRYPTION: "{{ snipe_it.email.encryption | b64encode }}"
-        MAIL_ENV_FROM_ADDR: "{{ snipe_it.email.email_from | b64encode }}"
-        MAIL_ENV_FROM_NAME: "{{ snipe_it.email.name | b64encode }}"
-        MAIL_ENV_PASSWORD: "{{ snipe_it.email.password | b64encode }}"
-        MAIL_ENV_USERNAME: "{{ snipe_it.email.user | b64encode }}"
-        MYSQL_PASSWORD: "{{ helm.mariadb.cluster.user_password | b64encode }}"
+    definition: "{{ lookup('template', 'templates/02_snipe_it/02_secret.yml') | from_yaml }}"
+
+- name: Deploy Snipe IT PVC
+  kubernetes.core.k8s:
+    wait: true
+    kubeconfig: "{{ kubeconfig.file }}"
+    context: "{{ kubeconfig.context }}"
+    state: present
+    definition: "{{ lookup('template', 'templates/02_snipe_it/03_pvc.yml') | from_yaml }}"
 
 - name: Deploy Snipe IT App
   kubernetes.core.k8s:
@@ -56,38 +28,7 @@
     kubeconfig: "{{ kubeconfig.file }}"
     context: "{{ kubeconfig.context }}"
     state: present
-    definition:
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        labels:
-          app: snipe-it
-        name: snipe-it
-        namespace: "{{ namespaces.snipe_it }}"
-      spec:
-        replicas: 1
-        selector:
-          matchLabels:
-            app: snipe-it
-        resources:
-          requests:
-            cpu: 500m
-            memory: 250Mi
-        template:
-          metadata:
-            labels:
-              app: snipe-it
-          spec:
-            containers:
-            - image: "{{ snipe_it.image.name }}:{{ snipe_it.image.tag }}"
-              name: snipe-it
-              ports:
-              - containerPort: 8000
-              envFrom:
-              - configMapRef:
-                  name: snipe-it
-              - secretRef:
-                  name: snipe-it
+    definition: "{{ lookup('template', 'templates/02_snipe_it/04_deployment.yml') | from_yaml }}"
 
 - name: Deploy Snipe IT Service
   kubernetes.core.k8s:
@@ -95,23 +36,12 @@
     kubeconfig: "{{ kubeconfig.file }}"
     context: "{{ kubeconfig.context }}"
     state: present
-    definition:
-      apiVersion: v1
-      kind: Service
-      metadata:
-        creationTimestamp: null
-        labels:
-          app: snipe-it
-        name: snipe-it
-        namespace: "{{ namespaces.snipe_it }}"
-      spec:
-        ports:
-        - name: 80-8000
-          port: 80
-          protocol: TCP
-          targetPort: 8000
-        selector:
-          app: snipe-it
-        type: ClusterIP
-      status:
-        loadBalancer: {}
+    definition: "{{ lookup('template', 'templates/02_snipe_it/05_service.yml') | from_yaml }}"
+
+- name: Deploy Snipe IT Ingress
+  kubernetes.core.k8s:
+    wait: true
+    kubeconfig: "{{ kubeconfig.file }}"
+    context: "{{ kubeconfig.context }}"
+    state: present
+    definition: "{{ lookup('template', 'templates/02_snipe_it/06_ingress.yml') | from_yaml }}"

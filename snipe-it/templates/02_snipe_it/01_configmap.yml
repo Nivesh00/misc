@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: snipe-it
+  namespace: "{{ namespaces.snipe_it }}"
+data:
+  APP_DEBUG: "false"
+  APP_LOCALE: en-US
+  APP_PORT: "80"
+  APP_URL: "https://{{ DOMAIN }}"
+  APP_TIMEZONE: Europe/Berlin
+  DB_CONNECTION: mysql
+  DB_SSL_IS_PAAS: "false"
+  DB_SSL: "false"
+  MYSQL_DATABASE: snipe-it-db
+  MYSQL_PORT_3306_TCP_ADDR: "{{ helm.mariadb.cluster.release_name }}"
+  MYSQL_PORT_3306_TCP_PORT: "3306"
+  MYSQL_USER: snipe-it-user
+  SCIM_STANDARDS_COMPLIANCE: "false"
+  SCIM_TRACE: "false"

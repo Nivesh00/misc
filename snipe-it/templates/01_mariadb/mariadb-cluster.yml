@@ -8,7 +8,7 @@ mariadb:
     key: root-password
     generate: true
   storage:
-    size: 1Gi
+    size: 50Gi
   replicas: 1
   galera:
     enabled: false
