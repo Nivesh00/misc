@@ -6,7 +6,7 @@ Add your variables to the `inventory.yml` file before running any ansible comman
 > Cert Manager is needed for TLS cert management
 
 ## Deploy Cert Manager
-> Inventory from this repo can be used to deploy Cert Manager
+> Use different inventories to deploy cert-manager
 
 - Clone git repository
 ```bash
