@@ -74,7 +74,7 @@ all:
               release_name: mariadb-cluster
               chart_ref: mariadb-operator/mariadb-cluster
               release_namespace: "{{ namespaces.snipe_it }}"
-              user_password:
+              user_password: <add-your-password-here> # set a long password here
 
         # Snipe IT Section
         snipe_it:
